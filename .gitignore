@@ -1,0 +1,6 @@
+# VS cache
+.vs/
+
+# VS binary output
+obj/
+bin/
