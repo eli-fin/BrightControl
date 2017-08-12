@@ -7,6 +7,8 @@
 	can be used to adjust the screen brightness.
 	You can right-click to exit.
 
+	There's a screenshot in the wiki (from the images folder)
+
 # Support
 	This app uses the WmiMonitorBrightness class.
 	It seems to be supported only with laptop/tablet screens.
