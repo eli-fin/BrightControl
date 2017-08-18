@@ -1,94 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BrightControl
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class BrightnessSlider : Window
+    public partial class BrightnessSlider : Window, IDisposable
     {
-        // Interop declerations
-        #region Window styles
-        [Flags]
-        public enum ExtendedWindowStyles
-        {
-            // ...
-            WS_EX_TOOLWINDOW = 0x00000080,
-            // ...
-        }
-
-        public enum GetWindowLongFields
-        {
-            // ...
-            GWL_EXSTYLE = (-20),
-            // ...
-        }
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowLong(IntPtr hWnd, int nIndex);
-
-        public static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
-        {
-            int error = 0;
-            IntPtr result = IntPtr.Zero;
-            // Win32 SetWindowLong doesn't clear error on success
-            SetLastError(0);
-
-            if (IntPtr.Size == 4)
-            {
-                // use SetWindowLong
-                Int32 tempResult = IntSetWindowLong(hWnd, nIndex, IntPtrToInt32(dwNewLong));
-                error = Marshal.GetLastWin32Error();
-                result = new IntPtr(tempResult);
-            }
-            else
-            {
-                // use SetWindowLongPtr
-                result = IntSetWindowLongPtr(hWnd, nIndex, dwNewLong);
-                error = Marshal.GetLastWin32Error();
-            }
-
-            if ((result == IntPtr.Zero) && (error != 0))
-            {
-                throw new System.ComponentModel.Win32Exception(error);
-            }
-
-            return result;
-        }
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", SetLastError = true)]
-        private static extern IntPtr IntSetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLong", SetLastError = true)]
-        private static extern Int32 IntSetWindowLong(IntPtr hWnd, int nIndex, Int32 dwNewLong);
-
-        private static int IntPtrToInt32(IntPtr intPtr)
-        {
-            return unchecked((int)intPtr.ToInt64());
-        }
-
-        [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
-        public static extern void SetLastError(int dwErrorCode);
-        #endregion
-
         // Contansts
         const int BRIGHTNESS_UPDATE_INTERVAL = 1000 / 3;
         const int HIDE_ANIMATION_LENGTH = 1;
@@ -132,10 +57,15 @@ namespace BrightControl
 
             WindowInteropHelper wndHelper = new WindowInteropHelper(this);
 
-            int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
+            int exStyle = NativeMethods.GetWindowLong(
+                wndHelper.Handle,
+                (int)NativeMethods.GetWindowLongFields.GWL_EXSTYLE);
 
-            exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
-            SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
+            exStyle |= (int)NativeMethods.ExtendedWindowStyles.WS_EX_TOOLWINDOW;
+            NativeMethods.SetWindowLong(
+                wndHelper.Handle,
+                (int)NativeMethods.GetWindowLongFields.GWL_EXSTYLE,
+                (IntPtr)exStyle);
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -169,9 +99,9 @@ namespace BrightControl
             updateBoxTimer.Dispose();
 
             // Hide with an animation
-            hidingAnimation = new DoubleAnimation(0, (Duration)TimeSpan.FromSeconds(HIDE_ANIMATION_LENGTH));
+            hidingAnimation = new DoubleAnimation(0, TimeSpan.FromSeconds(HIDE_ANIMATION_LENGTH));
             hidingAnimation.Completed += (s, _) => HideIfTransparent();
-            BeginAnimation(Control.OpacityProperty, hidingAnimation);
+            BeginAnimation(OpacityProperty, hidingAnimation);
         }
 
         // This function is needed if the tray is clicked multiple times and the previous animations
@@ -181,5 +111,95 @@ namespace BrightControl
             if (Opacity == 0)
                 Hide();
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    updateBoxTimer.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
+    }
+
+    internal static class NativeMethods
+    {
+        [Flags]
+        internal enum ExtendedWindowStyles
+        {
+            // ...
+            WS_EX_TOOLWINDOW = 0x00000080,
+            // ...
+        }
+
+        internal enum GetWindowLongFields
+        {
+            // ...
+            GWL_EXSTYLE = (-20),
+            // ...
+        }
+
+        [DllImport("user32.dll")]
+        internal static extern Int32 GetWindowLong(IntPtr hWnd, int nIndex);
+
+        internal static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            int error = 0;
+            IntPtr result = IntPtr.Zero;
+            // Win32 SetWindowLong doesn't clear error on success
+            SetLastError(0);
+
+            if (IntPtr.Size == 4)
+            {
+                // use SetWindowLong
+                Int32 tempResult = SetWindowLong32(hWnd, nIndex, IntPtrToInt32(dwNewLong));
+                error = Marshal.GetLastWin32Error();
+                result = new IntPtr(tempResult);
+            }
+            else
+            {
+                // use SetWindowLongPtr
+                result = SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
+                error = Marshal.GetLastWin32Error();
+            }
+
+            if ((result == IntPtr.Zero) && (error != 0))
+            {
+                throw new System.ComponentModel.Win32Exception(error);
+            }
+
+            return result;
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        private static int IntPtrToInt32(IntPtr intPtr)
+        {
+            return unchecked((int)intPtr.ToInt64());
+        }
+
+        [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
+        internal static extern void SetLastError(int dwErrorCode);
     }
 }

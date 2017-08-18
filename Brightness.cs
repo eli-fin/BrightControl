@@ -16,8 +16,10 @@ namespace BrightControl
             System.Management.SelectQuery query = new System.Management.SelectQuery("WmiMonitorBrightness");
 
             // Get current brightness
-            using (System.Management.ManagementObjectSearcher objectSearcher = new System.Management.ManagementObjectSearcher(scope, query))
-            using (System.Management.ManagementObjectCollection objectCollection = objectSearcher.Get())
+            using (System.Management.ManagementObjectSearcher objectSearcher =
+                    new System.Management.ManagementObjectSearcher(scope, query))
+            using (System.Management.ManagementObjectCollection objectCollection =
+                    objectSearcher.Get())
             {
                 // Store result
                 foreach (System.Management.ManagementObject o in objectCollection)
@@ -27,7 +29,7 @@ namespace BrightControl
                 }
             }
 
-            return (int)curBrightness;
+            return curBrightness;
         }
 
         // Set's brightness of all screens
@@ -40,8 +42,10 @@ namespace BrightControl
             System.Management.SelectQuery query = new System.Management.SelectQuery("WmiMonitorBrightnessMethods");
 
             // Get brightness methods
-            using (System.Management.ManagementObjectSearcher objectSearcher = new System.Management.ManagementObjectSearcher(scope, query))
-            using (System.Management.ManagementObjectCollection objectCollection = objectSearcher.Get())
+            using (System.Management.ManagementObjectSearcher objectSearcher =
+                new System.Management.ManagementObjectSearcher(scope, query))
+            using (System.Management.ManagementObjectCollection objectCollection =
+                objectSearcher.Get())
             {
                 // Store result
                 foreach (System.Management.ManagementObject o in objectCollection)

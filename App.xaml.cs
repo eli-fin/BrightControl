@@ -1,15 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace BrightControl
 {
@@ -46,7 +37,7 @@ namespace BrightControl
 
             // Set system tray icon
             notifyIcon = new System.Windows.Forms.NotifyIcon();
-            notifyIcon.MouseDown += new System.Windows.Forms.MouseEventHandler(notifyIcon_Click);
+            notifyIcon.MouseDown += new System.Windows.Forms.MouseEventHandler(NotifyIcon_Click);
             notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu();
             notifyIcon.ContextMenu.MenuItems.Add("About", new EventHandler(About));
             notifyIcon.ContextMenu.MenuItems.Add("Exit", new EventHandler(ShutDown));
@@ -56,7 +47,7 @@ namespace BrightControl
             notifyIcon.Visible = true;
         }
         
-        static private void notifyIcon_Click(object sender, EventArgs e)
+        static private void NotifyIcon_Click(object sender, EventArgs e)
         {
             if (((System.Windows.Forms.MouseEventArgs)e).Button == System.Windows.Forms.MouseButtons.Left)
             {
