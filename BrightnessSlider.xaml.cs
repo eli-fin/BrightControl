@@ -17,6 +17,7 @@ namespace BrightControl
         // Contansts
         const int BRIGHTNESS_UPDATE_INTERVAL = 1000 / 3;
         const int HIDE_ANIMATION_LENGTH = 1;
+        const double SLIDER_OPACITY = 0.8;
 
         // Variables
         int sliderVal = 0;
@@ -37,7 +38,7 @@ namespace BrightControl
             if (hidingAnimation != null)
                 BeginAnimation(OpacityProperty, null);
 
-            Opacity = 1;
+            Opacity = SLIDER_OPACITY;
             
             // Set initial slider value
             percentageSlider.Value = Brightness.GetBrightnes();
