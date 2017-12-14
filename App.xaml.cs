@@ -41,7 +41,7 @@ namespace BrightControl
             notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu();
             notifyIcon.ContextMenu.MenuItems.Add("About", new EventHandler(About));
             notifyIcon.ContextMenu.MenuItems.Add("Exit", new EventHandler(ShutDown));
-            Stream iconStream = GetResourceStream(new Uri("pack://application:,,,/Resources/trayIcon.ico")).Stream;
+            Stream iconStream = GetResourceStream(new Uri("pack://application:,,,/BrightControl;component/Resources/trayIcon.ico")).Stream;
             notifyIcon.Icon = new System.Drawing.Icon(iconStream);
             notifyIcon.Text = "BrightControl";
             notifyIcon.Visible = true;
