@@ -31,7 +31,7 @@ namespace BrightControl
                         "(Usually only supported by laptops and tablets)\n\n" +
                         "Bye!",
                         "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Environment.Exit(1);
+                    Shutdown(1);
                 }
             }
 
@@ -60,7 +60,7 @@ namespace BrightControl
                 catch (Exception ex)
                 {
                     MessageBox.Show("An error occured (" + ex.GetType() + ")\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Environment.Exit(1);
+                    Application.Current.Shutdown(1);
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace BrightControl
         static private void ShutDown(object sender, EventArgs e)
         {
             notifyIcon.Visible = false;
-            Environment.Exit(1);
+            Application.Current.Shutdown(0);
         }
 
         static private void About(object sender, EventArgs e)
@@ -80,7 +80,7 @@ namespace BrightControl
         {
             MessageBox.Show("An error occured (" + e.Exception.GetType() + ")\n" + e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
-            Environment.Exit(1);
+            Application.Current.Shutdown(1);
         }
     }
 }
