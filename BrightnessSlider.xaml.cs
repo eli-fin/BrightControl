@@ -17,7 +17,7 @@ namespace BrightControl
         // Contansts
         const int BRIGHTNESS_UPDATE_INTERVAL = 1000 / 3;
         const int HIDE_ANIMATION_LENGTH = 1;
-        const double SLIDER_OPACITY = 0.8;
+        const double SLIDER_OPACITY = 0.85;
 
         // Variables
         int sliderVal = 0;
@@ -47,9 +47,8 @@ namespace BrightControl
             // Use a time for the updater to avoid repeptive needless updates
             updateBoxTimer = new Timer(UpdateBrightness, null, BRIGHTNESS_UPDATE_INTERVAL, BRIGHTNESS_UPDATE_INTERVAL);
 
-            Activate();
-
             Show();
+            Activate();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
