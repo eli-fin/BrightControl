@@ -20,9 +20,38 @@
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
     <StackPanel VerticalAlignment="Center">
+
+        <StackPanel.Resources>
+            <!--
+            It seems the only way to change the thumb properties is to override the control template.
+            This looses the nice style, but allows to define a higher contrast between the thumb and
+            the rest of the slider, which can be pretty convenient when brightness is low.
+            -->
+            <Style x:Key="SliderStyle" TargetType="{x:Type Slider}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Slider}">
+                            <Grid VerticalAlignment="Center">
+                                <Border x:Name="borderBackground" Margin="6,0" Height="4" Background="Gray" />
+                                <Canvas Margin="0,-4,0,0" VerticalAlignment="Center">
+                                    <Border x:Name="PART_SelectionRange" HorizontalAlignment="Left" Height="4" Background="{TemplateBinding Foreground}" />
+                                </Canvas>
+                                <Track x:Name="PART_Track">
+                                    <Track.Thumb>
+                                        <Thumb Width="10" Height="20" Background="DarkBlue"/>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="Red" />
+            </Style>
+        </StackPanel.Resources>
+
         <Slider
             x:Name="percentageSlider"
-            Foreground="Green"
+            Style="{StaticResource SliderStyle}"
             Maximum="100" 
             Margin="10 0 10 0"
             TickPlacement="BottomRight" 
